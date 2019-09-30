@@ -16,9 +16,6 @@ WORKDIR /gremlin/apache-tinkerpop-gremlin-server-3.4.3
 # Place where the graph is saved, see gremlin-graph.properties
 RUN mkdir /graph_file
 
-# Configure gremlin for python
-RUN bin/gremlin-server.sh install org.apache.tinkerpop gremlin-python 3.4.0
-
 EXPOSE 8182
 
 # Copy the configuration files
