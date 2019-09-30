@@ -8,10 +8,10 @@ RUN apk update && \
 	update-ca-certificates
 
 # Install the server
-RUN wget -O /gremlin.zip http://mirror.cc.columbia.edu/pub/software/apache/tinkerpop/3.4.0/apache-tinkerpop-gremlin-server-3.4.0-bin.zip && \
-	unzip /gremlin.zip -d /gremlin && \
+RUN wget -O /gremlin.zip http://us.mirrors.quenda.co/apache/tinkerpop/3.4.3/apache-tinkerpop-gremlin-server-3.4.3-bin.zip && \
+  unzip /gremlin.zip -d /gremlin && \
 	rm /gremlin.zip
-WORKDIR /gremlin/apache-tinkerpop-gremlin-server-3.4.0
+WORKDIR /gremlin/apache-tinkerpop-gremlin-server-3.4.3
 
 # Place where the graph is saved, see gremlin-graph.properties
 RUN mkdir /graph_file
