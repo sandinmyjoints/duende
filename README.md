@@ -8,9 +8,12 @@ Tinkerpop](https://github.com/apache/tinkerpop), with a TinkerGraph.
 ```
 docker build -t duende .
 docker run -p 8182:8182 -v "$PWD"/data:/data -it --name duende duende
+yarn
+node index.js
 ```
 
-Connect with a Gremlin client on port 8182.
+Open up index.js and take a look at the Gremlin DSL. Try adding or changing!
+https://tinkerpop.apache.org/docs/current/reference/
 
 The graph will be saved into a graphson file, each time the server is shut
 down. It will also try to load the graph from this file (if it exists) each

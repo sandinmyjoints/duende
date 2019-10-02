@@ -13,6 +13,7 @@ async function main() {
   const g = traversal().withRemote(conn);
 
   try {
+    // Drop existing data.
     await g.V().drop().iterate();
 
     const v1 = await g
