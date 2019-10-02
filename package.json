@@ -1,0 +1,10 @@
+{
+  "name": "duend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "William Bert <william@spanishdict.com>",
+  "license": "MIT",
+  "dependencies": {
+    "gremlin": "3.4.3"
+  }
+}
