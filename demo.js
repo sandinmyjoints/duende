@@ -67,41 +67,41 @@ async function main() {
 
     mistakenEntities.forEach(gAddTextV);
 
-    const s1 = g.V().has('Phrase', 'text', 'estoy avergonzada');
-    const s2 = g.V().has('Phrase', 'text', 'estoy embarazada');
-    const mistake1 = s1
+    await g
+      .V()
+      .has('Phrase', 'text', 'estoy avergonzada')
       .addE('CommonMistake')
-      .to(s2)
+      .to(g.V().has('Phrase', 'text', 'estoy embarazada'))
       .property('reason', 'false cognate')
       .property(
         'explanation',
         '"Embarazada" sounds like "embarrassed" to English speakers, but it does not mean "embarrassed".'
-      );
-    await mistake1.iterate();
+      )
+      .iterate();
 
-    const s3 = g.V().has('Phrase', 'text', 'estoy bien');
-    const s4 = g.V().has('Phrase', 'text', 'soy bien');
-    const mistake2 = s3
+    await g
+      .V()
+      .has('Phrase', 'text', 'estoy bien')
       .addE('CommonMistake')
-      .to(s4)
+      .to(g.V().has('Phrase', 'text', 'soy bien'))
       .property('reason', 'ser-estar confusion')
       .property(
         'explanation',
         '"Ser" is used for permanent traits, while "estar" is used for temporary ones.'
-      );
-    await mistake2.iterate();
+      )
+      .iterate();
 
-    const s5 = g.V().has('Word', 'text', 'actually');
-    const s6 = g.V().has('Word', 'text', 'actualmente');
-    const mistake3 = s5
+    await g
+      .V()
+      .has('Word', 'text', 'actually')
       .addE('CommonMistake')
-      .to(s6)
+      .to(g.V().has('Word', 'text', 'actualmente'))
       .property('reason', 'false cognate')
       .property(
         'explanation',
         '"Actualamente" sounds like "actually" to English speakers, but it does not mean "actually".'
-      );
-    await mistake3.iterate();
+      )
+      .iterate();
 
     console.log(`done.`);
     await prompt('Show Words and Phrases that have CommonMistakes');
