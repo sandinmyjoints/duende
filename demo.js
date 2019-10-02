@@ -47,7 +47,6 @@ async function main() {
       { label: 'Phrase', text: 'estoy avergonzada', lang: 'es' },
       { label: 'Phrase', text: 'soy bien', lang: 'es' },
       { label: 'Word', text: 'actually', lang: 'en' },
-      { label: 'Word', text: 'bizarre', lang: 'en' },
       { label: 'Word', text: 'ser', lang: 'es' },
     ];
 
@@ -62,7 +61,6 @@ async function main() {
       { label: 'Phrase', text: 'estoy embarazada', lang: 'es' },
       { label: 'Phrase', text: 'estoy bien', lang: 'es' },
       { label: 'Word', text: 'actualmente', lang: 'es' },
-      { label: 'Word', text: 'bizarro', lang: 'es' },
     ];
 
     mistakenEntities.forEach(gAddTextV);
