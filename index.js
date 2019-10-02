@@ -23,7 +23,7 @@ async function addHeadwordV(props, canonicalStringV) {
     v1.property(key, props[key]);
   });
   return await v1
-    .addE('canonical')
+    .addE('Canonical')
     .to(canonicalStringV)
     .iterate();
 }
@@ -79,6 +79,10 @@ async function main() {
       'embarrass',
       'pregnant',
       'to be',
+      'estoy bien',
+      'soy bien',
+      'bien',
+      'ser',
     ];
 
     const headwords = [
@@ -90,6 +94,8 @@ async function main() {
       { string: 'embarrass', lang: 'en' },
       { string: 'pregnant', lang: 'en' },
       { string: 'to be', lang: 'en' },
+      { string: 'ser', lang: 'es' },
+      { string: 'bien', lang: 'es' },
     ];
 
     const gAddString = addStringV.bind(g);
@@ -113,6 +119,10 @@ async function main() {
     await gLinkStrings('i am pregnant', 'i', 'Contains');
     await gLinkStrings('i am pregnant', 'to be', 'Contains');
     await gLinkStrings('i am pregnant', 'pregnant', 'Contains');
+    await gLinkStrings('estoy bien', 'estar', 'Contains');
+    await gLinkStrings('estoy bien', 'bien', 'Contains');
+    await gLinkStrings('soy bien', 'ser', 'Contains');
+    await gLinkStrings('soy bien', 'bien', 'Contains');
 
     // await prompt('Show inbound links');
 
@@ -131,26 +141,60 @@ async function main() {
     //     'Embarazada sounds like embarrassed to English speakers but it does not mean embarrassed.',
     // });
 
-    const s1 = g.V().has('String', 'text', 'estoy embarazada');
-    const s2 = g.V().has('String', 'text', 'estoy avergonzada');
-    const e = s1
+    const s1 = g.V().has('String', 'text', 'estoy avergonzada');
+    const s2 = g.V().has('String', 'text', 'estoy embarazada');
+    const mistake1 = s1
       .addE('Mistake')
       .to(s2)
       .property('reason', 'false cognate')
       .property(
         'explanation',
-        'Embarazada sounds like embarrassed to English speakers but it does not mean embarrassed.'
+        '"Embarazada" sounds like embarrassed to English speakers but it does not mean "embarrassed".'
       );
-    await e.iterate();
+    await mistake1.iterate();
+
+    const s3 = g.V().has('String', 'text', 'estoy bien');
+    const s4 = g.V().has('String', 'text', 'soy bien');
+    const mistake2 = s3
+      .addE('Mistake')
+      .to(s4)
+      .property('reason', 'estar-ser confusion')
+      .property(
+        'explanation',
+        '"ser" is used for permanent traits, while "estar" is used for temporary ones'
+      );
+    await mistake2.iterate();
 
     await prompt('Show phrases with mistakes');
 
-    const mistakes = await g
+    const thing = await g
       .V()
-      .hasLabel('Mistake')
-      // .out()
+      .hasLabel('String')
+      .as('string')
+      .out('Mistake')
+      .as('mistakes')
+          .select('string', 'mistakes')
+          .by('text')
       .toList();
-    console.log(`phrases with mistakes`, mistakes);
+    console.log(`thing`, thing);
+
+    // find all mistake edges, then find the vertices they point to
+    // find all vertices that have an incoming mistake edge
+    const edgesThatAreMistakes = await g.E().hasLabel('Mistake');
+    console.log(`edges that are mistakes`, await edgesThatAreMistakes.toList());
+    console.log(
+      `vertices that are mistakes`,
+      await edgesThatAreMistakes.toList()
+    );
+
+    const edgesThatAreMistakes2 = await g.V().inE('Mistake').valueMap('reason', 'explanation');
+    console.log(
+      `edges that are mistakes 2`,
+      await edgesThatAreMistakes2.toList()
+    );
+
+    // const verticesThatHaveIncomingMistakes = await edgesThatAreMistakes.in()
+    // console.log(`vertices that are mistakes`, await verticesThatHaveIncomingMistakes.toList());
 
     console.log(`done.`);
   } catch (ex) {
