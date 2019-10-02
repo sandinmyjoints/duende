@@ -6,10 +6,13 @@ const gremlin = require('gremlin');
 const traversal = gremlin.process.AnonymousTraversalSource.traversal;
 const DriverRemoteConnection = gremlin.driver.DriverRemoteConnection;
 
-async function addPhraseV(text) {
+async function addTextV({ label, text, lang }) {
   const g = this;
-  const v1 = g.addV('Phrase').property('text', text);
-  return await v1.iterate();
+  return await g
+    .addV(label)
+    .property('text', text)
+    .property('lang', lang)
+    .iterate();
 }
 
 async function asyncPrompt(message) {
@@ -39,25 +42,30 @@ async function main() {
       .iterate();
 
     // Seed the graph.
-    const phrases = [
-      'de donde eres',
-      'me llamo',
-      'estoy avergonzada',
-      'soy bien',
+    const initialEntities = [
+      { label: 'Phrase', text: 'de dónde eres', lang: 'es' },
+      { label: 'Phrase', text: 'estoy avergonzada', lang: 'es' },
+      { label: 'Phrase', text: 'soy bien', lang: 'es' },
+      { label: 'Word', text: 'actually', lang: 'en' },
+      { label: 'Word', text: 'bizarre', lang: 'en' },
+      { label: 'Word', text: 'ser', lang: 'es' },
     ];
 
-    phrases.forEach(addPhraseV.bind(g));
+    const gAddTextV = addTextV.bind(g);
+    initialEntities.forEach(gAddTextV);
 
     console.log(`done.`);
     await prompt('Add CommonMistake edges');
     console.log(`Adding edges...`);
 
-    const mistakenPhrases = [
-      'estoy embarazada',
-      'estoy bien',
+    const mistakenEntities = [
+      { label: 'Phrase', text: 'estoy embarazada', lang: 'es' },
+      { label: 'Phrase', text: 'estoy bien', lang: 'es' },
+      { label: 'Word', text: 'actualmente', lang: 'es' },
+      { label: 'Word', text: 'bizarro', lang: 'es' },
     ];
 
-    mistakenPhrases.forEach(addPhraseV.bind(g));
+    mistakenEntities.forEach(gAddTextV);
 
     const s1 = g.V().has('Phrase', 'text', 'estoy avergonzada');
     const s2 = g.V().has('Phrase', 'text', 'estoy embarazada');
@@ -67,7 +75,7 @@ async function main() {
       .property('reason', 'false cognate')
       .property(
         'explanation',
-        '"Embarazada" sounds like embarrassed to English speakers but it does not mean "embarrassed".'
+        '"Embarazada" sounds like "embarrassed" to English speakers, but it does not mean "embarrassed".'
       );
     await mistake1.iterate();
 
@@ -76,29 +84,43 @@ async function main() {
     const mistake2 = s3
       .addE('CommonMistake')
       .to(s4)
-      .property('reason', 'estar-ser confusion')
+      .property('reason', 'ser-estar confusion')
       .property(
         'explanation',
-        '"ser" is used for permanent traits, while "estar" is used for temporary ones'
+        '"Ser" is used for permanent traits, while "estar" is used for temporary ones.'
       );
     await mistake2.iterate();
 
-    console.log(`done.`);
-    await prompt('Show Phrases that have CommonMistakes');
+    const s5 = g.V().has('Word', 'text', 'actually');
+    const s6 = g.V().has('Word', 'text', 'actualmente');
+    const mistake3 = s5
+      .addE('CommonMistake')
+      .to(s6)
+      .property('reason', 'false cognate')
+      .property(
+        'explanation',
+        '"Actualamente" sounds like "actually" to English speakers, but it does not mean "actually".'
+      );
+    await mistake3.iterate();
 
-    const phrasesAndTheirCommonMistakes = await g
+    console.log(`done.`);
+    await prompt('Show Words and Phrases that have CommonMistakes');
+
+    const textsAndTheirCommonMistakes = await g
       .V()
-      .hasLabel('Phrase')
-      .as('phrase')
+      .has('text')
+      .as('phrase/word')
       .out('CommonMistake')
-      .as('mistakes')
-      .select('phrase', 'mistakes')
+      // .properties('reason')
+      .as('mistake')
+      .select('phrase/word', 'mistake')
       .by('text')
+      // .by('reason')
       .toList();
 
     console.log(
-      'Phrases and their common mistakes:\n',
-      phrasesAndTheirCommonMistakes
+      'Words/phrases and their common mistakes:\n',
+      textsAndTheirCommonMistakes
     );
   } catch (ex) {
     console.error(ex);
