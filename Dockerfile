@@ -13,13 +13,11 @@ RUN wget -O /gremlin.zip http://us.mirrors.quenda.co/apache/tinkerpop/3.4.3/apac
 	rm /gremlin.zip
 WORKDIR /gremlin/apache-tinkerpop-gremlin-server-3.4.3
 
-# Place where the graph is saved, see gremlin-graph.properties
-RUN mkdir /graph_file
+RUN mkdir /data
 
 EXPOSE 8182
 
-# Copy the configuration files
-COPY files .
+COPY config .
 
 # Use the dumb-init init system to correctly forward shutdown signals to gremlin-server
 ENTRYPOINT ["/usr/bin/dumb-init", "--rewrite", "15:2",  "--"]
