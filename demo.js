@@ -55,7 +55,7 @@ async function main() {
     initialEntities.forEach(gAddTextV);
 
     console.log(`done.`);
-    await prompt('Add CommonMistake edges');
+    await prompt('Add Mistake edges');
     console.log(`Adding edges...`);
 
     const mistakenEntities = [
@@ -70,7 +70,7 @@ async function main() {
     await g
       .V()
       .has('Phrase', 'text', 'estoy avergonzada')
-      .addE('CommonMistake')
+      .addE('Mistake')
       .to(g.V().has('Phrase', 'text', 'estoy embarazada'))
       .property('reason', 'false cognate')
       .property(
@@ -82,7 +82,7 @@ async function main() {
     await g
       .V()
       .has('Phrase', 'text', 'estoy bien')
-      .addE('CommonMistake')
+      .addE('Mistake')
       .to(g.V().has('Phrase', 'text', 'soy bien'))
       .property('reason', 'ser-estar confusion')
       .property(
@@ -94,7 +94,7 @@ async function main() {
     await g
       .V()
       .has('Word', 'text', 'actually')
-      .addE('CommonMistake')
+      .addE('Mistake')
       .to(g.V().has('Word', 'text', 'actualmente'))
       .property('reason', 'false cognate')
       .property(
@@ -104,23 +104,24 @@ async function main() {
       .iterate();
 
     console.log(`done.`);
-    await prompt('Show Words and Phrases that have CommonMistakes');
+    await prompt('Show Words and Phrases that have Mistakes');
 
-    const textsAndTheirCommonMistakes = await g
+    const wordsAndTheirMistakes = await g
       .V()
       .has('text')
       .as('phrase/word')
-      .out('CommonMistake')
+      .out('Mistake')
       // .properties('reason')
       .as('mistake')
       .select('phrase/word', 'mistake')
+      // .select(values)
       .by('text')
       // .by('reason')
       .toList();
 
     console.log(
       'Words/phrases and their common mistakes:\n',
-      textsAndTheirCommonMistakes
+      wordsAndTheirMistakes
     );
   } catch (ex) {
     console.error(ex);
