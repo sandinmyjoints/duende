@@ -111,20 +111,19 @@ async function main() {
       .groupCount()
       .next();
 
-    console.log(`\nCounts of kinds of mistakes:\n`, countsOfKindsOfMistakes.value);
+    console.log(
+      `\nCounts of kinds of mistakes:\n`,
+      countsOfKindsOfMistakes.value
+    );
 
     const wordsAndTheirMistakes = await g
       .V()
       .has('text')
-      // .project('a')
-      // .by('text')
       .as('phrase/word')
       .out('Mistake')
       .as('mistaken answer')
       .select('phrase/word', 'mistaken answer')
-      // .select(values)
       .by('text')
-      // .by('reason')
       .toList();
 
     console.log(
@@ -132,6 +131,37 @@ async function main() {
       wordsAndTheirMistakes
     );
 
+    // const wordsAndTheirMistakes2 = await g
+    //   .V()
+    //   .has('text')
+    //   .as('phrase/word')
+    //   // .project('a')
+    //   .aggregate('x')
+    //   .by('text')
+    //   .cap('x')
+    //   // .back('phrase/word')
+    //   .outE('Mistake')
+    //   .as('mistake')
+    //   .aggregate('y')
+    //   .by('reason')
+    //   .cap('y')
+    //   // .back('mistake')
+    //   .inV()
+    //   .as('mistaken answer')
+    //   .aggregate('z')
+    //   .by('text')
+    //   .cap('z')
+    //   // .back('mistaken answer')
+    //   .select('phrase/word', 'mistake', 'mistaken answer')
+    //   // .select(values)
+    //   // .by('text')
+    //   // .by('reason')
+    //   .toList();
+
+    // console.log(
+    //   '\nWords/phrases and their common mistakes:\n',
+    //   wordsAndTheirMistakes2
+    // );
   } catch (ex) {
     console.error(ex);
   } finally {
