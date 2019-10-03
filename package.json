@@ -5,6 +5,8 @@
   "author": "William Bert <william@spanishdict.com>",
   "license": "MIT",
   "dependencies": {
-    "gremlin": "3.4.3"
+    "eslint": "6.5.1",
+    "gremlin": "3.4.3",
+    "prompts": "2.2.1"
   }
 }
