@@ -226,10 +226,19 @@ async function main() {
     .to(singingStringVortex)
     .iterate();
 
-    const canto = await g.V().has('canonical_text', 'canto').next();
+    // Find all the outgoing edges from "canto", and the immediate vertices they
+    // point to.
+    const canto = await g.V()
+          .has('canonical_text', 'canto')
+          .inE()
+          .as('edge')
+          .outV()
+          .as('vertex')
+          .select('edge', 'vertex')
+          .toList();
     console.log('query', canto);
-    
-  
+
+
 
 
   } catch (ex) {
