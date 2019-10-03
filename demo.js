@@ -104,14 +104,24 @@ async function main() {
     console.log(`done.`);
     await prompt('Show Words and Phrases that have Mistakes');
 
+    const countsOfKindsOfMistakes = await g
+      .E()
+      .hasLabel('Mistake')
+      .values('reason')
+      .groupCount()
+      .next();
+
+    console.log(`\nCounts of kinds of mistakes:\n`, countsOfKindsOfMistakes.value);
+
     const wordsAndTheirMistakes = await g
       .V()
       .has('text')
+      // .project('a')
+      // .by('text')
       .as('phrase/word')
       .out('Mistake')
-      // .properties('reason')
-      .as('mistake')
-      .select('phrase/word', 'mistake')
+      .as('mistaken answer')
+      .select('phrase/word', 'mistaken answer')
       // .select(values)
       .by('text')
       // .by('reason')
@@ -121,15 +131,6 @@ async function main() {
       '\nWords/phrases and their common mistakes:\n',
       wordsAndTheirMistakes
     );
-
-    const kindsOfMistakes = await g
-      .E()
-      .hasLabel('Mistake')
-      .group()
-      .by('reason')
-      // .by(count())
-      .next();
-    console.log(`\nKinds of mistakes:\n`, kindsOfMistakes.value);
 
   } catch (ex) {
     console.error(ex);
