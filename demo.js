@@ -118,9 +118,19 @@ async function main() {
       .toList();
 
     console.log(
-      'Words/phrases and their common mistakes:\n',
+      '\nWords/phrases and their common mistakes:\n',
       wordsAndTheirMistakes
     );
+
+    const kindsOfMistakes = await g
+      .E()
+      .hasLabel('Mistake')
+      .group()
+      .by('reason')
+      // .by(count())
+      .next();
+    console.log(`\nKinds of mistakes:\n`, kindsOfMistakes.value);
+
   } catch (ex) {
     console.error(ex);
   } finally {
